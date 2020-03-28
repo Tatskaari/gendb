@@ -4,7 +4,7 @@ An SQL query builder for go using a powerful hand crafted AST to provide a power
 DSL for crafting SQL. This project is current at a proof of concept stage to show how the 
 DSL may work. It just has partial support for select statements at the moment. In the future
 I plan to add support for a wider set of the standard SQL dialect as well as supporting the
-postgres dialect as a first class citezen. 
+postgres dialect as a first class citizen. 
 
 Another goal of this project is to generate code based on row structs to help with type safe 
 acess to database columns. 
