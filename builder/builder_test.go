@@ -18,7 +18,7 @@ func (s *builderSuite) TestSelectFrom() {
 	sb := builder.From("foo").
 		Select("name")
 
-	s.Equal("foo", sb.FromBuilder.Table)
+	s.Equal("foo", sb.From)
 	s.Require().Len( sb.Columns, 1, "incorrect number of columns in select")
 	s.Require().IsType(&builder.IdentExpression{}, sb.Columns[0])
 	s.Equal("name", sb.Columns[0].(*builder.IdentExpression).Name)

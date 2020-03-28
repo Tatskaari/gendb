@@ -13,10 +13,8 @@ func Sqlize(sb *builder.SelectBuilder) (string, []interface{}) {
 	}
 	sql, args := selectCols(sb.Columns)
 
-	if sb.FromBuilder != nil {
-		fromClause, fromArgs := from(sb.FromBuilder)
-		sql = sql + " " + fromClause
-		args = combineArgs(args, fromArgs)
+	if sb.From != "" {
+		sql = sql + " FROM " + sb.From
 	}
 	if sb.JoinBuilders != nil {
 		joinClauses, joinArgs := joins(sb.JoinBuilders)
@@ -92,10 +90,6 @@ func orExpr(eqExpr *builder.OrExpr) (string, []interface{}) {
 
 func boundValExpr(expr *builder.BoundValueExpr) (string, []interface{}) {
 	return "?", []interface{} {expr.Value}
-}
-
-func from(from *builder.FromBuilder) (string, []interface{}) {
-	return fmt.Sprintf("FROM %s", from.Table), nil
 }
 
 func joins(joins []*builder.JoinBuilder) (string, []interface{}) {
