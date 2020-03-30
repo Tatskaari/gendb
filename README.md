@@ -25,13 +25,25 @@ sql, args := sqlizer.Sqlize(sb.SelectBuilder)
 
 ```
 
+# Features
+- Building selects using a fluent DSL that should come natural to anybody familiar with SQL. 
+  Using a fluent builder pattern to construct an AST to generate the query, there's no need
+  to concatenate strings together for joins as with squirrel. Any strings passed to the builder
+  are exclusively for identifiers and as such must match the SQL identifier format. This makes 
+  SQL injection impossible when using the DSL. 
+- Infers the type of expressions based on the golang types. Passing a string will be treated
+  as a column identifier. Anything that implements `builder.Expr`'s will of course be left as 
+  is. Anything else is treated as a bound variable. If you want to bind a string, use 
+  `buiderl.Bind` to explicitly bind it.
+- WIP code generation to generate utility functions for each table including: table name constant, 
+  list of column names, functions to select and bind from that table, and functions to join through
+  to other tables based on it's foreign key.  
+  
+
 # Future work
 
-## Sanitization
-We need to check that the strings that we're passing in at each point of the builder do not
-contain any injected SQL. Unlike squirrel I don't plan to allow arbitrary strings to be passed
-in to the builder. This should make it impossible to get an SQL syntax error when using the 
-DSL. 
+## Query execution and result binding 
+We need a way to execute the query and scan the result into a result struct. 
 
 ## Code Generation
 
