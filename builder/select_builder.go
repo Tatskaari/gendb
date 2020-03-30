@@ -2,13 +2,13 @@ package builder
 
 type SelectBuilder struct {
 	Columns      []Expr
-	FromTable  string
+	FromTable  *IdentExpression
 	JoinBuilders []*JoinBuilder
 	WhereBuilder *ExprBuilder
 }
 
 func (sb *SelectBuilder) From(table string) *SelectBuilder {
-	sb.FromTable = table
+	sb.FromTable = Col(table)
 	return sb
 }
 func Select(columns ...string) *SelectBuilder {

@@ -14,8 +14,8 @@ func Sqlize(sb *builder.SelectBuilder) (string, []interface{}) {
 	}
 	sql, args := selectCols(sb.Columns)
 
-	if sb.FromTable != "" {
-		sql = sql + " FROM " + sb.FromTable
+	if sb.FromTable != nil {
+		sql = sql + " FROM " + sb.FromTable.Name
 	}
 	if sb.JoinBuilders != nil {
 		joinClauses, joinArgs := joins(sb.JoinBuilders)

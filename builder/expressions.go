@@ -12,6 +12,7 @@ type IdentExpression struct {
 func (*IdentExpression) isExpr() {}
 
 func Col(name string) *IdentExpression {
+	// TODO: sanitize the name of any injected SQL
 	return &IdentExpression{Name: name}
 }
 
@@ -22,18 +23,21 @@ type EqExpression struct {
 
 func (*EqExpression) isExpr() {}
 
-func ColEq(lhs string, rhs string) *EqExpression {
+func Eq(lhs interface{}, rhs interface{}) *EqExpression {
 	return &EqExpression{
-		LHS: &IdentExpression{lhs},
-		RHS: &IdentExpression{rhs},
+		LHS: ToExpression(lhs),
+		RHS: ToExpression(rhs),
 	}
 }
 
-func Eq(lhs Expr, rhs Expr) *EqExpression {
-	return &EqExpression{
-		LHS: lhs,
-		RHS: rhs,
+func ToExpression(expr interface{}) Expr {
+	if expr, ok := expr.(Expr); ok {
+		return expr
 	}
+	if expr, ok := expr.(string); ok {
+		return Col(expr)
+	}
+	return Bind(expr)
 }
 
 type BoundValueExpr struct {

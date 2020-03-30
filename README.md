@@ -15,9 +15,9 @@ acess to database columns.
 
 qry := builder.Select("foo.name").
     From("foo").
-    Join("bar").On(builder.ColEq("foo.bar_id", "bar.id")).And(builder.Col("active")).
-    Join("baz").On(builder.ColEq("bar.baz_id", "baz.id")).Or(builder.Col("active")).
-    Where(builder.Eq(builder.Col("name"), builder.Bind("name"))).And(builder.Col("active"))
+    Join("bar").On(builder.Eq("foo.bar_id", "bar.id")).And("active").
+    Join("baz").On(builder.Eq("bar.baz_id", "baz.id")).Or("active").
+    Where(builder.Eq("name", builder.Bind("some name"))).And("active")
     
 sql, args := sqlizer.Sqlize(sb.SelectBuilder)
 
@@ -32,13 +32,6 @@ We need to check that the strings that we're passing in at each point of the bui
 contain any injected SQL. Unlike squirrel I don't plan to allow arbitrary strings to be passed
 in to the builder. This should make it impossible to get an SQL syntax error when using the 
 DSL. 
-
-## Inferring types of expressions from the go type
-Currently we have to specify the type of the expression when passing in parameters to the 
-builder. For example we have to say `builder.Col(columnName)` to refer to a column of a table.
-In the future, all of these functions will take in a `interface{}` and attempt to generate an
-expression based on some rules. Strings will refer to column names and if you want to pass a 
-bound string, you can use `builder.Bind(stringValue)`.
 
 ## Code Generation
 

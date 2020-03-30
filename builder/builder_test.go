@@ -18,7 +18,7 @@ func (s *builderSuite) TestSelectFrom() {
 	sb := builder.Select("name").From("foo")
 
 
-	s.Equal("foo", sb.FromTable)
+	s.Equal("foo", sb.FromTable.Name)
 	s.Require().Len( sb.Columns, 1, "incorrect number of columns in select")
 	s.Require().IsType(&builder.IdentExpression{}, sb.Columns[0])
 	s.Equal("name", sb.Columns[0].(*builder.IdentExpression).Name)
@@ -27,8 +27,8 @@ func (s *builderSuite) TestSelectFrom() {
 func (s *builderSuite) TestJoin() {
 	jbs := builder.Select("name").
 		From("foo").
-		Join("bar").On(builder.ColEq("foo.bar_id", "bar.id")).And(builder.ColEq("foo.name", "bar.name")).
-		Join("baz").On(builder.ColEq("bar.baz_id", "baz.id")).
+		Join("bar").On(builder.Eq("foo.bar_id", "bar.id")).And(builder.Eq("foo.name", "bar.name")).
+		Join("baz").On(builder.Eq("bar.baz_id", "baz.id")).
 		JoinBuilders
 
 	s.Require().Len(jbs, 2)
@@ -74,7 +74,7 @@ func (s *builderSuite) TestJoin() {
 
 func (s *builderSuite) TestWhere() {
 	wb := builder.Select().From("foo").
-		Where(builder.Eq(builder.Col("name"), builder.Bind("some_name"))).
+		Where(builder.Eq("name", builder.Bind("some_name"))).
 		Or(builder.Col("active")).
 		WhereBuilder
 
@@ -83,4 +83,10 @@ func (s *builderSuite) TestWhere() {
 
 	s.Require().IsType(&builder.EqExpression{}, andExpr.LHS)
 	s.Require().IsType(&builder.IdentExpression{}, andExpr.RHS)
+}
+
+func (s *builderSuite) TestToExpression(){
+	s.Equal(&builder.IdentExpression{Name: "test"}, builder.ToExpression("test"))
+	s.Equal(&builder.BoundValueExpr{Value: 5}, builder.ToExpression(5))
+	s.Equal(&builder.IdentExpression{Name: "test"}, builder.Col("test"))
 }
