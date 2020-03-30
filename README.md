@@ -1,10 +1,10 @@
 # gendb
 
-An SQL query builder for Golang using a powerful hand crafted AST to provide a powerful fluent 
-DSL for safely writing SQL. This project is current at a proof of concept stage to show how the 
-DSL may work. It just has partial support for select statements at the moment. In the future
-I plan to add support for a wider set of the standard SQL dialect as well as supporting the
-postgres dialect as a first class citizen. 
+An SQL query builder for Golang using a hand crafted AST to provide a fluent DSL for safely 
+writing SQL. This project is current at a proof of concept stage to show how the DSL may work. 
+It just has partial support for select statements at the moment. In the future I plan to add 
+support for a wider set of the standard SQL dialect as well as supporting the postgres dialect 
+as a first class citizen. 
 
 Another goal of this project is to generate code based on row structs to help with type safe 
 acess to database columns. 
