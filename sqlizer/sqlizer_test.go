@@ -1,9 +1,9 @@
 package sqlizer_test
 
 import (
-	"gendb/builder"
-	"gendb/sqlizer"
 	"github.com/stretchr/testify/suite"
+	"github.com/tatskaari/gendb/builder"
+	"github.com/tatskaari/gendb/sqlizer"
 	"testing"
 )
 

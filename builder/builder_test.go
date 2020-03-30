@@ -1,8 +1,8 @@
 package builder_test
 
 import (
-	"gendb/builder"
 	"github.com/stretchr/testify/suite"
+	"github.com/tatskaari/gendb/builder"
 	"testing"
 )
 

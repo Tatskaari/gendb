@@ -3,8 +3,9 @@ package sqlizer
 import (
 	"errors"
 	"fmt"
-	"gendb/builder"
 	"strings"
+
+	"github.com/tatskaari/gendb/builder"
 )
 
 func Sqlize(sb *builder.SelectBuilder) (string, []interface{}) {
