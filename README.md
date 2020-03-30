@@ -1,6 +1,6 @@
 # gendb
 
-An SQL query builder for go using a powerful hand crafted AST to provide a powerful fluent 
+An SQL query builder for Golang using a powerful hand crafted AST to provide a powerful fluent 
 DSL for safely writing SQL. This project is current at a proof of concept stage to show how the 
 DSL may work. It just has partial support for select statements at the moment. In the future
 I plan to add support for a wider set of the standard SQL dialect as well as supporting the
