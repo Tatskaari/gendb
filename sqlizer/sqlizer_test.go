@@ -16,7 +16,7 @@ func TestSuite(t *testing.T) {
 }
 
 func (s *sqlizerSuite) TestSelectFrom() {
-	sb := builder.From("foo").Select("name")
+	sb := builder.Select("name").From("foo")
 	sql, args := sqlizer.Sqlize(sb)
 
 	s.Equal("SELECT name FROM foo", sql)
@@ -24,8 +24,8 @@ func (s *sqlizerSuite) TestSelectFrom() {
 }
 
 func (s *sqlizerSuite) TestJoin() {
-	sb := builder.From("foo").
-		Select("foo.name").
+	sb := builder.Select("foo.name").
+		From("foo").
 		Join("bar").On(builder.ColEq("foo.bar_id", "bar.id")).And(builder.Col("active")).
 		Join("baz").On(builder.ColEq("bar.baz_id", "baz.id")).Or(builder.Col("active"))
 
@@ -36,8 +36,8 @@ func (s *sqlizerSuite) TestJoin() {
 }
 
 func (s *sqlizerSuite) TestWhere() {
-	sb := builder.From("foo").
-		Select("foo.id").
+	sb := builder.Select("foo.id").
+		From("foo").
 		Where(builder.Eq(builder.Col("name"), builder.Bind("name"))).And(builder.Col("active"))
 
 	sql, args := sqlizer.Sqlize(sb.SelectBuilder)

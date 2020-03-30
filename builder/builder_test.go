@@ -15,18 +15,18 @@ func TestSuite(t *testing.T) {
 }
 
 func (s *builderSuite) TestSelectFrom() {
-	sb := builder.From("foo").
-		Select("name")
+	sb := builder.Select("name").From("foo")
 
-	s.Equal("foo", sb.From)
+
+	s.Equal("foo", sb.FromTable)
 	s.Require().Len( sb.Columns, 1, "incorrect number of columns in select")
 	s.Require().IsType(&builder.IdentExpression{}, sb.Columns[0])
 	s.Equal("name", sb.Columns[0].(*builder.IdentExpression).Name)
 }
 
 func (s *builderSuite) TestJoin() {
-	jbs := builder.From("foo").
-		Select("name").
+	jbs := builder.Select("name").
+		From("foo").
 		Join("bar").On(builder.ColEq("foo.bar_id", "bar.id")).And(builder.ColEq("foo.name", "bar.name")).
 		Join("baz").On(builder.ColEq("bar.baz_id", "baz.id")).
 		JoinBuilders
@@ -73,7 +73,7 @@ func (s *builderSuite) TestJoin() {
 }
 
 func (s *builderSuite) TestWhere() {
-	wb := builder.From("foo").
+	wb := builder.Select().From("foo").
 		Where(builder.Eq(builder.Col("name"), builder.Bind("some_name"))).
 		Or(builder.Col("active")).
 		WhereBuilder

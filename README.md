@@ -13,11 +13,11 @@ acess to database columns.
 
 ```golang
 
-qry := builder.From("foo").
-		Select("foo.name").
-		Join("bar").On(builder.ColEq("foo.bar_id", "bar.id")).And(builder.Col("active")).
-		Join("baz").On(builder.ColEq("bar.baz_id", "baz.id")).Or(builder.Col("active")).
-		Where(builder.Eq(builder.Col("name"), builder.Bind("name"))).And(builder.Col("active"))
+qry := builder.Select("foo.name").
+    From("foo").
+    Join("bar").On(builder.ColEq("foo.bar_id", "bar.id")).And(builder.Col("active")).
+    Join("baz").On(builder.ColEq("bar.baz_id", "baz.id")).Or(builder.Col("active")).
+    Where(builder.Eq(builder.Col("name"), builder.Bind("name"))).And(builder.Col("active"))
     
 sql, args := sqlizer.Sqlize(sb.SelectBuilder)
 

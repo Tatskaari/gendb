@@ -32,7 +32,7 @@ const templateString = `
 `
 
 func SelectFrom(table string, columns []string) *builder.SelectBuilder {
-	return builder.From(table).Select(columns...)
+	return builder.Select(columns...).From(table)
 }
 
 type data struct {

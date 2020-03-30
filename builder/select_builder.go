@@ -2,24 +2,24 @@ package builder
 
 type SelectBuilder struct {
 	Columns      []Expr
-	From  string
+	FromTable  string
 	JoinBuilders []*JoinBuilder
 	WhereBuilder *ExprBuilder
 }
 
-func From(table string) *SelectBuilder {
-	return &SelectBuilder{
-		From: table,
-	}
+func (sb *SelectBuilder) From(table string) *SelectBuilder {
+	sb.FromTable = table
+	return sb
 }
-func (sb *SelectBuilder) Select(columns ...string) *SelectBuilder {
+func Select(columns ...string) *SelectBuilder {
 	exprs := make([]Expr, len(columns))
 	for i, colName := range columns {
 		exprs[i] = &IdentExpression{Name: colName}
 	}
 
-	sb.Columns = exprs
-	return sb
+	return &SelectBuilder{
+		Columns: exprs,
+	}
 }
 
 func (sb *SelectBuilder) Join(table string) *JoinBuilder {
