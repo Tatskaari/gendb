@@ -46,6 +46,11 @@ sql, args := sqlizer.Sqlize(sb.SelectBuilder)
 
 # Future work
 
+## PostgreSQL dialect 
+I plan to implement other dialects as their own builders in their own package. This will mean hiding all
+the current builders behind interfaces to allow the dialects to implement them with their extensions. This
+approach should allow consumers of this library to extend the DSL for their use case. 
+
 ## Query execution and result binding 
 We need a way to execute the query and scan the result into a result struct. 
 
