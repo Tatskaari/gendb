@@ -31,44 +31,28 @@ func (s *builderSuite) TestJoin() {
 		JoinBuilders
 
 	s.Require().Len(jbs, 2)
-	joinBuilder := jbs[0]
 
-	s.Equal("bar", joinBuilder.Table)
+	s.Equal("bar", jbs[0].Table)
+	s.Equal(&builder.BinOpExpr{
+		LHS: &builder.BinOpExpr{
+			LHS:    &builder.IdentExpression{Name: "foo.bar_id"},
+			RHS:    &builder.IdentExpression{Name: "bar.id"},
+			Symbol: "=",
+		},
+		RHS:    &builder.BinOpExpr{
+			LHS:    &builder.IdentExpression{Name: "foo.name"},
+			RHS:    &builder.IdentExpression{Name: "bar.name"},
+			Symbol: "=",
+		},
+		Symbol: "AND",
+	}, jbs[0].OnCondition.Expr)
 
-	s.Require().IsType(&builder.AndExpr{}, jbs[0].OnCondition.Expr)
-	andExpr := joinBuilder.OnCondition.Expr.(*builder.AndExpr)
-
-	s.Require().IsType(&builder.EqExpression{}, andExpr.LHS)
-	andLHS := andExpr.LHS.(*builder.EqExpression)
-
-	s.Require().IsType(&builder.IdentExpression{}, andLHS.LHS)
-	s.Equal("foo.bar_id", andLHS.LHS.(*builder.IdentExpression).Name)
-
-	s.Require().IsType(&builder.IdentExpression{}, andLHS.RHS)
-	s.Equal("bar.id", andLHS.RHS.(*builder.IdentExpression).Name)
-
-	s.Require().IsType(&builder.EqExpression{}, andExpr.RHS)
-	andRHS := andExpr.RHS.(*builder.EqExpression)
-
-	s.Require().IsType(&builder.IdentExpression{}, andLHS.LHS)
-	s.Equal("foo.name", andRHS.LHS.(*builder.IdentExpression).Name)
-
-	s.Require().IsType(&builder.IdentExpression{}, andLHS.RHS)
-	s.Equal("bar.name", andRHS.RHS.(*builder.IdentExpression).Name)
-
-	joinBuilder = jbs[1]
-
-	s.Equal("baz", joinBuilder.Table)
-
-	s.Require().IsType(&builder.EqExpression{}, jbs[1].OnCondition.Expr)
-	onCondition := joinBuilder.OnCondition.Expr.(*builder.EqExpression)
-
-	s.Require().IsType(&builder.IdentExpression{}, onCondition.LHS)
-	s.Equal("bar.baz_id", onCondition.LHS.(*builder.IdentExpression).Name)
-
-	s.Require().IsType(&builder.IdentExpression{}, onCondition.RHS)
-	s.Equal("baz.id", onCondition.RHS.(*builder.IdentExpression).Name)
-
+	s.Equal("baz", jbs[1].Table)
+	s.Equal(&builder.BinOpExpr{
+		LHS:    &builder.IdentExpression{Name: "bar.baz_id"},
+		RHS:    &builder.IdentExpression{Name: "baz.id"},
+		Symbol: "=",
+	}, jbs[1].OnCondition.Expr)
 }
 
 func (s *builderSuite) TestWhere() {
@@ -77,11 +61,15 @@ func (s *builderSuite) TestWhere() {
 		Or(builder.Col("active")).
 		WhereBuilder
 
-	s.Require().IsType(&builder.OrExpr{}, wb.Expr)
-	andExpr := wb.Expr.(*builder.OrExpr)
-
-	s.Require().IsType(&builder.EqExpression{}, andExpr.LHS)
-	s.Require().IsType(&builder.IdentExpression{}, andExpr.RHS)
+	s.Equal(&builder.BinOpExpr{
+		LHS:    &builder.BinOpExpr{
+			LHS:    &builder.IdentExpression{Name: "name"},
+			RHS:    &builder.BoundValueExpr{Value: "some_name"},
+			Symbol: "=",
+		},
+		RHS:    &builder.IdentExpression{Name: "active"},
+		Symbol: "OR",
+	}, wb.WhereBuilder.Expr)
 }
 
 func (s *builderSuite) TestToExpression() {
@@ -130,14 +118,8 @@ func (s *builderSuite) TestUpdateBuilder() {
 	s.Equal(ub.Sets[1].Column.Name, "name")
 	s.Equal(ub.Sets[1].Value, builder.Bind("some_other_name"))
 
-	s.Equal(&builder.AndExpr{
-		LHS: &builder.EqExpression{
-			LHS: builder.Col("id"),
-			RHS: builder.Bind(4321),
-		},
-		RHS: &builder.EqExpression{
-			LHS: builder.Col("name"),
-			RHS: builder.Bind("old_name"),
-		},
-	}, ub.WhereCondition.Expr)
+	s.Equal(builder.And(
+		builder.Eq(builder.Col("id"), builder.Bind(4321)),
+		builder.Eq(builder.Col("name"), builder.Bind("old_name")),
+	), ub.WhereCondition.Expr)
 }

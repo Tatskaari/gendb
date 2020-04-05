@@ -59,19 +59,11 @@ type SelectExprBuilder struct {
 }
 
 func (eb *SelectExprBuilder) And(expr Expr) *SelectExprBuilder {
-	eb.Expr = &AndExpr{
-		LHS: eb.Expr,
-		RHS: expr,
-	}
-
+	eb.Expr = And(eb.Expr, expr)
 	return eb
 }
 
 func (eb *SelectExprBuilder) Or(expr Expr) *SelectExprBuilder {
-	eb.Expr = &OrExpr{
-		LHS: eb.Expr,
-		RHS: expr,
-	}
-
+	eb.Expr = Or(eb.Expr, expr)
 	return eb
 }

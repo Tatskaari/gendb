@@ -16,17 +16,67 @@ func Col(name string) *IdentExpression {
 	return &IdentExpression{Name: name}
 }
 
-type EqExpression struct {
+type BinOpExpr struct {
 	LHS Expr
 	RHS Expr
+	Symbol string
 }
 
-func (*EqExpression) isExpr() {}
+func (*BinOpExpr) isExpr() {}
 
-func Eq(lhs interface{}, rhs interface{}) *EqExpression {
-	return &EqExpression{
+func Eq(lhs interface{}, rhs interface{}) *BinOpExpr {
+	return &BinOpExpr{
 		LHS: ToExpression(lhs),
 		RHS: ToExpression(rhs),
+		Symbol: "=",
+	}
+}
+
+func LT(lhs interface{}, rhs interface{}) *BinOpExpr {
+	return &BinOpExpr{
+		LHS: ToExpression(lhs),
+		RHS: ToExpression(rhs),
+		Symbol: "<",
+	}
+}
+
+func LTE(lhs interface{}, rhs interface{}) *BinOpExpr {
+	return &BinOpExpr{
+		LHS: ToExpression(lhs),
+		RHS: ToExpression(rhs),
+		Symbol: "<=",
+	}
+}
+
+func GT(lhs interface{}, rhs interface{}) *BinOpExpr {
+	return &BinOpExpr{
+		LHS: ToExpression(lhs),
+		RHS: ToExpression(rhs),
+		Symbol: ">",
+	}
+}
+
+func GTE(lhs interface{}, rhs interface{}) *BinOpExpr {
+	return &BinOpExpr{
+		LHS: ToExpression(lhs),
+		RHS: ToExpression(rhs),
+		Symbol: ">=",
+	}
+}
+
+func And(lhs interface{}, rhs interface{}) *BinOpExpr {
+	return &BinOpExpr{
+		LHS: ToExpression(lhs),
+		RHS: ToExpression(rhs),
+		Symbol: "AND",
+	}
+}
+
+func Or(lhs interface{}, rhs interface{}) *BinOpExpr {
+	return &BinOpExpr{
+		LHS: ToExpression(lhs),
+		RHS: ToExpression(rhs),
+		Symbol: "OR",
 	}
 }
 
@@ -51,17 +101,3 @@ func Bind(value interface{}) *BoundValueExpr {
 		Value: value,
 	}
 }
-
-type AndExpr struct {
-	LHS Expr
-	RHS Expr
-}
-
-func (*AndExpr) isExpr() {}
-
-type OrExpr struct {
-	LHS Expr
-	RHS Expr
-}
-
-func (*OrExpr) isExpr() {}

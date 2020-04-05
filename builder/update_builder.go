@@ -42,17 +42,11 @@ type UpdateExprBuilder struct {
 }
 
 func (eb *UpdateExprBuilder) And(expr Expr) *UpdateExprBuilder {
-	eb.Expr = &AndExpr{
-		LHS: eb.Expr,
-		RHS: expr,
-	}
+	eb.Expr = And(eb.Expr, expr)
 	return eb
 }
 
 func (eb *UpdateExprBuilder) Or(expr Expr) *UpdateExprBuilder {
-	eb.Expr = &OrExpr{
-		LHS: eb.Expr,
-		RHS: expr,
-	}
+	eb.Expr = Or(eb.Expr, expr)
 	return eb
 }
