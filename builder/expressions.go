@@ -32,6 +32,14 @@ func Eq(lhs interface{}, rhs interface{}) *BinOpExpr {
 	}
 }
 
+func NotEq(lhs interface{}, rhs interface{}) *BinOpExpr {
+	return &BinOpExpr{
+		LHS: ToExpression(lhs),
+		RHS: ToExpression(rhs),
+		Symbol: "!=",
+	}
+}
+
 func LT(lhs interface{}, rhs interface{}) *BinOpExpr {
 	return &BinOpExpr{
 		LHS: ToExpression(lhs),
@@ -79,6 +87,20 @@ func Or(lhs interface{}, rhs interface{}) *BinOpExpr {
 		Symbol: "OR",
 	}
 }
+
+type UnaryOpExpr struct {
+	Expr Expr
+	Symbol string
+}
+
+func Not(expr interface{}) *UnaryOpExpr {
+	return &UnaryOpExpr{
+		Expr:   ToExpression(expr),
+		Symbol: "NOT",
+	}
+}
+
+func (*UnaryOpExpr) isExpr() {}
 
 func ToExpression(expr interface{}) Expr {
 	if expr, ok := expr.(Expr); ok {

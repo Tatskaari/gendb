@@ -10,7 +10,7 @@ func Update(ub *builder.UpdateBuilder) (string, []interface{}) {
 	sql := "UPDATE " + ub.Table + " " + setSQl
 
 	if ub.WhereCondition != nil {
-		whereClause, whereArgs := expr(ub.WhereCondition.Expr)
+		whereClause, whereArgs := Expr(ub.WhereCondition.Expr)
 		sql = sql + " WHERE " + whereClause
 		args = combineArgs(args, whereArgs)
 	}
@@ -30,6 +30,6 @@ func sets(sets []*builder.Set) (string, []interface{}) {
 }
 
 func set(set *builder.Set) (string, []interface{}) {
-	valueSql, args := expr(set.Value)
+	valueSql, args := Expr(set.Value)
 	return set.Column.Name + " = " + valueSql, args
 }

@@ -35,7 +35,7 @@ func valueRow(values []builder.Expr) (string, []interface{}) {
 	valueSql := make([]string, len(values))
 
 	for i, value := range values {
-		sql, a := expr(value)
+		sql, a := Expr(value)
 		args = combineArgs(args, a)
 		valueSql[i] = sql
 	}

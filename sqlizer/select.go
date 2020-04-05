@@ -23,7 +23,7 @@ func Select(sb *builder.SelectBuilder) (string, []interface{}) {
 		args = combineArgs(args, joinArgs)
 	}
 	if sb.WhereBuilder != nil {
-		whereClause, whereArgs := expr(sb.WhereBuilder.Expr)
+		whereClause, whereArgs := Expr(sb.WhereBuilder.Expr)
 		sql = sql + " WHERE " + whereClause
 		args = combineArgs(args, whereArgs)
 	}
@@ -35,7 +35,7 @@ func selectCols(cols []builder.Expr) (string, []interface{}) {
 	colsSql := make([]string, len(cols))
 	var args []interface{}
 	for i, col := range cols {
-		colSql, colArgs := expr(col)
+		colSql, colArgs := Expr(col)
 		colsSql[i] = colSql
 		args = combineArgs(args, colArgs)
 	}
@@ -56,6 +56,6 @@ func joins(joins []*builder.JoinBuilder) (string, []interface{}) {
 }
 
 func join(join *builder.JoinBuilder) (string, []interface{}) {
-	onCond, onArgs := expr(join.OnCondition.Expr)
+	onCond, onArgs := Expr(join.OnCondition.Expr)
 	return fmt.Sprintf("JOIN %s ON %s", join.Table, onCond), onArgs
 }
