@@ -112,3 +112,32 @@ func (s *builderSuite) TestInsertBuilder() {
 	s.Equal(builder.Bind(2345), ib.ValueRows[0][ib.ColumnsOrder["bar_id"]])
 	s.Equal(builder.Bind(5432), ib.ValueRows[1][ib.ColumnsOrder["bar_id"]])
 }
+
+func (s *builderSuite) TestUpdateBuilder() {
+	ub := builder.Update("foo").
+		Set("bar_id", 1234).
+		Set("name", builder.Bind("some_other_name")).
+		Where(builder.Eq("id", 4321)).
+		And(builder.Eq("name", builder.Bind("old_name")))
+
+	s.Equal("foo", ub.Table)
+
+	s.Require().Len(ub.Sets, 2)
+
+	s.Equal(ub.Sets[0].Column.Name, "bar_id")
+	s.Equal(ub.Sets[0].Value, builder.Bind(1234))
+
+	s.Equal(ub.Sets[1].Column.Name, "name")
+	s.Equal(ub.Sets[1].Value, builder.Bind("some_other_name"))
+
+	s.Equal(&builder.AndExpr{
+		LHS: &builder.EqExpression{
+			LHS: builder.Col("id"),
+			RHS: builder.Bind(4321),
+		},
+		RHS: &builder.EqExpression{
+			LHS: builder.Col("name"),
+			RHS: builder.Bind("old_name"),
+		},
+	}, ub.WhereCondition.Expr)
+}

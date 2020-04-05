@@ -4,7 +4,7 @@ type SelectBuilder struct {
 	Columns      []Expr
 	FromTable  *IdentExpression
 	JoinBuilders []*JoinBuilder
-	WhereBuilder *ExprBuilder
+	WhereBuilder *SelectExprBuilder
 }
 
 func (sb *SelectBuilder) From(table string) *SelectBuilder {
@@ -32,13 +32,11 @@ func (sb *SelectBuilder) Join(table string) *JoinBuilder {
 type JoinBuilder struct {
 	Parent      *SelectBuilder
 	Table       string
-	OnCondition *ExprBuilder
+	OnCondition *SelectExprBuilder
 }
 
-
-
-func (jb *JoinBuilder) On(condition Expr) *ExprBuilder {
-	jb.OnCondition = &ExprBuilder{
+func (jb *JoinBuilder) On(condition Expr) *SelectExprBuilder {
+	jb.OnCondition = &SelectExprBuilder{
 		SelectBuilder:  jb.Parent,
 		Expr:         	condition,
 	}
@@ -47,10 +45,33 @@ func (jb *JoinBuilder) On(condition Expr) *ExprBuilder {
 }
 
 
-func (sb *SelectBuilder) Where(expr Expr) *ExprBuilder {
-	sb.WhereBuilder = &ExprBuilder{
+func (sb *SelectBuilder) Where(expr Expr) *SelectExprBuilder {
+	sb.WhereBuilder = &SelectExprBuilder{
 		SelectBuilder: sb,
 		Expr:         	expr,
 	}
 	return sb.WhereBuilder
+}
+
+type SelectExprBuilder struct {
+	*SelectBuilder
+	Expr Expr
+}
+
+func (eb *SelectExprBuilder) And(expr Expr) *SelectExprBuilder {
+	eb.Expr = &AndExpr{
+		LHS: eb.Expr,
+		RHS: expr,
+	}
+
+	return eb
+}
+
+func (eb *SelectExprBuilder) Or(expr Expr) *SelectExprBuilder {
+	eb.Expr = &OrExpr{
+		LHS: eb.Expr,
+		RHS: expr,
+	}
+
+	return eb
 }
