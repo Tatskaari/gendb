@@ -1,7 +1,7 @@
 package executor_test
 
 import (
-	"database/sql"
+	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/stretchr/testify/suite"
 	"github.com/tatskaari/gendb/builder"
@@ -18,7 +18,7 @@ type fooRecord struct {
 
 type executorTestSuite struct {
 	suite.Suite
-	con *sql.DB
+	con *sqlx.DB
 }
 
 func TestGenDB(t *testing.T) {
@@ -26,7 +26,7 @@ func TestGenDB(t *testing.T) {
 }
 
 func (s *executorTestSuite) SetupTest() {
-	con, err := sql.Open("sqlite3", ":memory:")
+	con, err := sqlx.Open("sqlite3", ":memory:")
 	s.NoError(err, "failed to start database")
 	s.con = con
 
@@ -35,7 +35,6 @@ func (s *executorTestSuite) SetupTest() {
 
 	_, err = con.Exec("CREATE TABLE bar (id INTEGER, name TEXT)")
 	s.NoError(err)
-
 }
 
 func (s *executorTestSuite) TestExecute() {

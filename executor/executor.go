@@ -9,6 +9,7 @@ import (
 type QueryRunner interface {
 	Query(query string, args ...interface{}) (*sql.Rows, error)
 	Exec(query string, args ...interface{}) (sql.Result, error)
+	Rebind(query string) string
 }
 
 type Sqlizer interface {
@@ -51,17 +52,17 @@ func (e *Executor) Select(columns ...string) *builder.SelectBuilder {
 
 func (e *Executor) ExecInsert(ib *builder.InsertBuilder) (sql.Result, error) {
 	s, args := e.sqlizer.Insert(ib)
-	return e.qr.Exec(s, args...)
+	return e.qr.Exec(e.qr.Rebind(s), args...)
 }
 
 func (e *Executor) ExecUpdate(ib *builder.UpdateBuilder) (sql.Result, error) {
 	s, args := e.sqlizer.Update(ib)
-	return e.qr.Exec(s, args...)
+	return e.qr.Exec(e.qr.Rebind(s), args...)
 }
 
 func (e *Executor) Query(sb *builder.SelectBuilder, dest interface{}) error {
 	s, args := e.sqlizer.Select(sb)
-	rows, err := e.qr.Query(s, args...)
+	rows, err := e.qr.Query(e.qr.Rebind(s), args...)
 	if err != nil {
 		return err
 	}
