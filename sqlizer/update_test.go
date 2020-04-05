@@ -6,8 +6,8 @@ import (
 )
 
 func (s *sqlizerSuite) TestUpdate(){
-	sql, args := sqlizer.Update(
-		builder.Update("foo").
+	sql, args := new(sqlizer.StandardSqlizer).Update(
+		new(builder.UpdateBuilder).Update("foo").
 			Set("bar_id", 1234).
 			Set("name", builder.Bind("new_name")).
 			Where(builder.Eq("id", 4321)).

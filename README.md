@@ -12,14 +12,23 @@ acess to database columns.
 # Example
 
 ```golang
+con, err := sql.Open(...)
+...
 
-qry := builder.Select("foo.name").
+type fooRecord struct {
+    name `db:"name"`
+    ...
+}
+
+ex := executor.New(con, new(sqlizer.StandardSqlizer))
+
+var rows []fooRecord
+err := ex.Select("foo.name").
     From("foo").
     Join("bar").On(builder.Eq("foo.bar_id", "bar.id")).And("active").
     Join("baz").On(builder.Eq("bar.baz_id", "baz.id")).Or("active").
-    Where(builder.Eq("name", builder.Bind("some name"))).And("active")
-    
-sql, args := sqlizer.Sqlize(sb.SelectBuilder)
+    Where(builder.Eq("name", builder.Bind("some name"))).And("active").
+    Query(&rows)
 
 ...
 

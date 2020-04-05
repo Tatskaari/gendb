@@ -7,7 +7,7 @@ import (
 
 func (s *sqlizerSuite) TestInsert() {
 	s.Run("basic insert", func() {
-		sql, args := sqlizer.Insert(builder.Insert("foo").Values(map[string]interface{}{"id": 123}))
+		sql, args := new(sqlizer.StandardSqlizer).Insert(new(builder.InsertBuilder).Into("foo").Values(map[string]interface{}{"id": 123}))
 
 		s.Equal("INSERT INTO foo (id) VALUES (?)", sql)
 		s.Len(args, 1)
@@ -15,8 +15,8 @@ func (s *sqlizerSuite) TestInsert() {
 	})
 
 	s.Run("multi row insert", func() {
-		sql, args := sqlizer.Insert(
-			builder.Insert("foo").
+		sql, args := new(sqlizer.StandardSqlizer).Insert(
+			new(builder.InsertBuilder).Into("foo").
 				Values(map[string]interface{}{"id": 123}).
 				Values(map[string]interface{}{"id": 456}),
 		)
@@ -29,7 +29,7 @@ func (s *sqlizerSuite) TestInsert() {
 
 	s.Run("multi row insert with multi args", func() {
 
-		ib := builder.Insert("foo")
+		ib := new(builder.InsertBuilder).Into("foo")
 
 		// set the column order so the columns always come out in the same order
 		ib.ColumnsOrder = map[string]int{
@@ -38,7 +38,7 @@ func (s *sqlizerSuite) TestInsert() {
 			"bar_id": 2,
 		}
 
-		sql, args := sqlizer.Insert(
+		sql, args := new(sqlizer.StandardSqlizer).Insert(
 			ib.
 				Values(map[string]interface{}{"id": 123, "name": builder.Bind("first"), "bar_id": 234}).
 				Values(map[string]interface{}{"id": 321, "name": builder.Bind("second"), "bar_id": 432}),

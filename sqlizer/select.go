@@ -8,7 +8,7 @@ import (
 	"github.com/tatskaari/gendb/builder"
 )
 
-func Select(sb *builder.SelectBuilder) (string, []interface{}) {
+func (*StandardSqlizer) Select(sb *builder.SelectBuilder) (string, []interface{}) {
 	if sb.Columns == nil {
 		panic(errors.New("select builder was missing select columns"))
 	}

@@ -1,15 +1,24 @@
 package builder
 
-type InsertBuilder struct {
-	Into string
-	ColumnsOrder map[string]int
-	ValueRows		 [][]Expr
+import (
+	"database/sql"
+)
+
+type insertExecutor interface {
+	ExecInsert(builder *InsertBuilder) (sql.Result, error)
 }
 
-func Insert(into string) *InsertBuilder {
-	return &InsertBuilder{
-		Into: into,
-	}
+type InsertBuilder struct {
+	IntoTable string
+	ColumnsOrder map[string]int
+	ValueRows		 [][]Expr
+
+	Executor insertExecutor
+}
+
+func (ib *InsertBuilder) Into(into string) *InsertBuilder {
+	ib.IntoTable = into
+	return ib
 }
 
 func (ib *InsertBuilder) Values(values map[string]interface{}) *InsertBuilder {
@@ -28,4 +37,8 @@ func (ib *InsertBuilder) Values(values map[string]interface{}) *InsertBuilder {
 	}
 	ib.ValueRows = append(ib.ValueRows, vs)
 	return ib
+}
+
+func (ib *InsertBuilder) Exec() (sql.Result, error) {
+	return ib.Executor.ExecInsert(ib)
 }

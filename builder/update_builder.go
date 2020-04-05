@@ -1,9 +1,17 @@
 package builder
 
+import "database/sql"
+
+type updateExecutor interface {
+	ExecUpdate(builder *UpdateBuilder) (sql.Result, error)
+}
+
 type UpdateBuilder struct {
 	Table string
 	Sets []*Set
 	WhereCondition *UpdateExprBuilder
+
+	Executor updateExecutor
 }
 
 type Set struct {
@@ -11,10 +19,9 @@ type Set struct {
 	Value Expr
 }
 
-func Update(table string) *UpdateBuilder {
-	return &UpdateBuilder{
-		Table: table,
-	}
+func (ub *UpdateBuilder) Update(table string) *UpdateBuilder {
+	ub.Table = table
+	return ub
 }
 
 func (ub *UpdateBuilder) Set(column string, value interface{}) *UpdateBuilder {
@@ -49,4 +56,8 @@ func (eb *UpdateExprBuilder) And(expr Expr) *UpdateExprBuilder {
 func (eb *UpdateExprBuilder) Or(expr Expr) *UpdateExprBuilder {
 	eb.Expr = Or(eb.Expr, expr)
 	return eb
+}
+
+func (ub *UpdateBuilder)  Exec() (sql.Result, error) {
+	return ub.Executor.ExecUpdate(ub)
 }

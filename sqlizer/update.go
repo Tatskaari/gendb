@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func Update(ub *builder.UpdateBuilder) (string, []interface{}) {
+func (*StandardSqlizer) Update(ub *builder.UpdateBuilder) (string, []interface{}) {
 	setSQl, args := sets(ub.Sets)
 	sql := "UPDATE " + ub.Table + " " + setSQl
 

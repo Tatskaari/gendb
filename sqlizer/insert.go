@@ -5,9 +5,9 @@ import (
 	"strings"
 )
 
-func Insert(ib *builder.InsertBuilder) (string, []interface{}) {
+func (*StandardSqlizer) Insert(ib *builder.InsertBuilder) (string, []interface{}) {
 	values, args := values(ib.ValueRows)
-	return "INSERT INTO " + ib.Into + " (" + insertCols(ib.ColumnsOrder) + ") " + values, args
+	return "INSERT INTO " + ib.IntoTable + " (" + insertCols(ib.ColumnsOrder) + ") " + values, args
 }
 
 func insertCols(columnOrders map[string]int) string {

@@ -2,7 +2,7 @@ package template_test
 
 import (
 	"github.com/stretchr/testify/suite"
-	template "github.com/tatskaari/gendb/gen/tempalate"
+	template "github.com/tatskaari/gendb/gen/template"
 	"regexp"
 	"testing"
 )

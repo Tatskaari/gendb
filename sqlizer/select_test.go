@@ -7,7 +7,7 @@ import (
 
 func (s *sqlizerSuite) TestSelectFrom() {
 	sb := builder.Select("name").From("foo")
-	sql, args := sqlizer.Select(sb)
+	sql, args := new(sqlizer.StandardSqlizer).Select(sb)
 
 	s.Equal("SELECT name FROM foo", sql)
 	s.Nil(args)
@@ -19,7 +19,7 @@ func (s *sqlizerSuite) TestJoin() {
 		Join("bar").On(builder.Eq("foo.bar_id", "bar.id")).And(builder.Col("active")).
 		Join("baz").On(builder.Eq("bar.baz_id", "baz.id")).Or(builder.Col("active"))
 
-	sql, args := sqlizer.Select(sb.SelectBuilder)
+	sql, args := new(sqlizer.StandardSqlizer).Select(sb.SelectBuilder)
 
 	s.Equal("SELECT foo.name FROM foo JOIN bar ON foo.bar_id = bar.id AND active JOIN baz ON bar.baz_id = baz.id OR active", sql)
 	s.Nil(args)
@@ -30,7 +30,7 @@ func (s *sqlizerSuite) TestWhere() {
 		From("foo").
 		Where(builder.Eq("name", builder.Bind("name"))).And(builder.Col("active"))
 
-	sql, args := sqlizer.Select(sb.SelectBuilder)
+	sql, args := new(sqlizer.StandardSqlizer).Select(sb.SelectBuilder)
 
 	s.Equal("SELECT foo.id FROM foo WHERE name = ? AND active", sql)
 	s.Require().Len(args, 1)

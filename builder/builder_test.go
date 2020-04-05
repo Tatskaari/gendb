@@ -15,7 +15,7 @@ func TestSuite(t *testing.T) {
 }
 
 func (s *builderSuite) TestSelectFrom() {
-	sb := builder.Select("name").From("foo")
+	sb := new(builder.SelectBuilder).Select("name").From("foo")
 
 	s.Equal("foo", sb.FromTable.Name)
 	s.Require().Len(sb.Columns, 1, "incorrect number of columns in select")
@@ -24,7 +24,7 @@ func (s *builderSuite) TestSelectFrom() {
 }
 
 func (s *builderSuite) TestJoin() {
-	jbs := builder.Select("name").
+	jbs := new(builder.SelectBuilder).Select("name").
 		From("foo").
 		Join("bar").On(builder.Eq("foo.bar_id", "bar.id")).And(builder.Eq("foo.name", "bar.name")).
 		Join("baz").On(builder.Eq("bar.baz_id", "baz.id")).
@@ -39,7 +39,7 @@ func (s *builderSuite) TestJoin() {
 			RHS:    &builder.IdentExpression{Name: "bar.id"},
 			Symbol: "=",
 		},
-		RHS:    &builder.BinOpExpr{
+		RHS: &builder.BinOpExpr{
 			LHS:    &builder.IdentExpression{Name: "foo.name"},
 			RHS:    &builder.IdentExpression{Name: "bar.name"},
 			Symbol: "=",
@@ -56,13 +56,13 @@ func (s *builderSuite) TestJoin() {
 }
 
 func (s *builderSuite) TestWhere() {
-	wb := builder.Select().From("foo").
+	wb := new(builder.SelectBuilder).Select().From("foo").
 		Where(builder.Eq("name", builder.Bind("some_name"))).
 		Or(builder.Col("active")).
 		WhereBuilder
 
 	s.Equal(&builder.BinOpExpr{
-		LHS:    &builder.BinOpExpr{
+		LHS: &builder.BinOpExpr{
 			LHS:    &builder.IdentExpression{Name: "name"},
 			RHS:    &builder.BoundValueExpr{Value: "some_name"},
 			Symbol: "=",
@@ -79,7 +79,7 @@ func (s *builderSuite) TestToExpression() {
 }
 
 func (s *builderSuite) TestInsertBuilder() {
-	ib := builder.Insert("foo").
+	ib := new(builder.InsertBuilder).Into("foo").
 		Values(map[string]interface{}{
 			"id":     1234,
 			"name":   builder.Bind("some name"),
@@ -102,7 +102,7 @@ func (s *builderSuite) TestInsertBuilder() {
 }
 
 func (s *builderSuite) TestUpdateBuilder() {
-	ub := builder.Update("foo").
+	ub := new(builder.UpdateBuilder).Update("foo").
 		Set("bar_id", 1234).
 		Set("name", builder.Bind("some_other_name")).
 		Where(builder.Eq("id", 4321)).
