@@ -69,12 +69,11 @@ func (s *executorTestSuite) TestExecute() {
 
 	s.Require().NoError(err)
 
-	fooRows = nil
+	var fooRow fooRecord
 	err = ex.Select("id", "name", "bar_id").
 		From("foo").
 		Where(builder.Eq("id", expectedFooRow.ID)).
-		Query(&fooRows)
+		Get(&fooRow)
 
-	s.Require().Len(fooRows, 1)
-	s.Equal("some other name", fooRows[0].Name)
+	s.Equal("some other name", fooRow.Name)
 }

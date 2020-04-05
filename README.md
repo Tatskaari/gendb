@@ -11,6 +11,8 @@ acess to database columns.
 
 # Example
 
+There's an example of a CRUD application in the [example](https://github.com/tatskaari/gendb/tree/master/example) package.
+
 ```golang
 con, err := sql.Open(...)
 ...

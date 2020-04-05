@@ -2,6 +2,7 @@ package builder
 
 type selectExecutor interface {
 	Query(sb *SelectBuilder, dest interface{}) error
+	Get(sb *SelectBuilder, dest interface{}) error
 }
 
 type SelectBuilder struct {
@@ -62,16 +63,20 @@ type SelectExprBuilder struct {
 	Expr Expr
 }
 
-func (eb *SelectExprBuilder) And(expr Expr) *SelectExprBuilder {
+func (eb *SelectExprBuilder) And(expr interface{}) *SelectExprBuilder {
 	eb.Expr = And(eb.Expr, expr)
 	return eb
 }
 
-func (eb *SelectExprBuilder) Or(expr Expr) *SelectExprBuilder {
+func (eb *SelectExprBuilder) Or(expr interface{}) *SelectExprBuilder {
 	eb.Expr = Or(eb.Expr, expr)
 	return eb
 }
 
 func (sb *SelectBuilder) Query(dest interface{}) error {
 	return sb.Executor.Query(sb, dest)
+}
+
+func (sb *SelectBuilder) Get(dest interface{}) error {
+	return sb.Executor.Get(sb, dest)
 }

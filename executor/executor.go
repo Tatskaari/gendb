@@ -8,6 +8,7 @@ import (
 
 type QueryRunner interface {
 	Query(query string, args ...interface{}) (*sql.Rows, error)
+	Get(dest interface{}, query string, args ...interface{}) error
 	Exec(query string, args ...interface{}) (sql.Result, error)
 	Rebind(query string) string
 }
@@ -68,4 +69,9 @@ func (e *Executor) Query(sb *builder.SelectBuilder, dest interface{}) error {
 	}
 
 	return sqlx.StructScan(rows, dest)
+}
+
+func (e *Executor) Get(sb *builder.SelectBuilder, dest interface{}) error {
+	s, args := e.sqlizer.Select(sb)
+	return e.qr.Get(dest, e.qr.Rebind(s), args...)
 }

@@ -48,12 +48,12 @@ type UpdateExprBuilder struct {
 	Expr Expr
 }
 
-func (eb *UpdateExprBuilder) And(expr Expr) *UpdateExprBuilder {
+func (eb *UpdateExprBuilder) And(expr interface{}) *UpdateExprBuilder {
 	eb.Expr = And(eb.Expr, expr)
 	return eb
 }
 
-func (eb *UpdateExprBuilder) Or(expr Expr) *UpdateExprBuilder {
+func (eb *UpdateExprBuilder) Or(expr interface{}) *UpdateExprBuilder {
 	eb.Expr = Or(eb.Expr, expr)
 	return eb
 }
