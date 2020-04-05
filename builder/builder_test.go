@@ -17,9 +17,8 @@ func TestSuite(t *testing.T) {
 func (s *builderSuite) TestSelectFrom() {
 	sb := builder.Select("name").From("foo")
 
-
 	s.Equal("foo", sb.FromTable.Name)
-	s.Require().Len( sb.Columns, 1, "incorrect number of columns in select")
+	s.Require().Len(sb.Columns, 1, "incorrect number of columns in select")
 	s.Require().IsType(&builder.IdentExpression{}, sb.Columns[0])
 	s.Equal("name", sb.Columns[0].(*builder.IdentExpression).Name)
 }
@@ -85,8 +84,31 @@ func (s *builderSuite) TestWhere() {
 	s.Require().IsType(&builder.IdentExpression{}, andExpr.RHS)
 }
 
-func (s *builderSuite) TestToExpression(){
+func (s *builderSuite) TestToExpression() {
 	s.Equal(&builder.IdentExpression{Name: "test"}, builder.ToExpression("test"))
 	s.Equal(&builder.BoundValueExpr{Value: 5}, builder.ToExpression(5))
 	s.Equal(&builder.IdentExpression{Name: "test"}, builder.Col("test"))
+}
+
+func (s *builderSuite) TestInsertBuilder() {
+	ib := builder.Insert("foo").
+		Values(map[string]interface{}{
+			"id":     1234,
+			"name":   builder.Bind("some name"),
+			"bar_id": 2345,
+		}).
+		Values(map[string]interface{}{
+			"id":     4321,
+			"name":   builder.Bind("some other name"),
+			"bar_id": 5432,
+		})
+
+	s.Equal(builder.Bind(1234), ib.ValueRows[0][ib.ColumnsOrder["id"]])
+	s.Equal(builder.Bind(4321), ib.ValueRows[1][ib.ColumnsOrder["id"]])
+
+	s.Equal(builder.Bind("some name"), ib.ValueRows[0][ib.ColumnsOrder["name"]])
+	s.Equal(builder.Bind("some other name"), ib.ValueRows[1][ib.ColumnsOrder["name"]])
+
+	s.Equal(builder.Bind(2345), ib.ValueRows[0][ib.ColumnsOrder["bar_id"]])
+	s.Equal(builder.Bind(5432), ib.ValueRows[1][ib.ColumnsOrder["bar_id"]])
 }
