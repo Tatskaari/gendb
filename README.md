@@ -1,10 +1,10 @@
 # gendb
 
-An SQL query builder for go using a powerful hand crafted AST to provide a powerful fluent 
-DSL for crafting SQL. This project is current at a proof of concept stage to show how the 
-DSL may work. It just has partial support for select statements at the moment. In the future
-I plan to add support for a wider set of the standard SQL dialect as well as supporting the
-postgres dialect as a first class citizen. 
+An SQL query builder for Golang using a hand crafted AST to provide a fluent DSL for safely 
+writing SQL. This project is current at a proof of concept stage to show how the DSL may work. 
+It just has partial support for select statements at the moment. In the future I plan to add 
+support for a wider set of the standard SQL dialect as well as supporting the postgres dialect 
+as a first class citizen. 
 
 Another goal of this project is to generate code based on row structs to help with type safe 
 acess to database columns. 
@@ -37,10 +37,19 @@ sql, args := sqlizer.Sqlize(sb.SelectBuilder)
   `buiderl.Bind` to explicitly bind it.
 - WIP code generation to generate utility functions for each table including: table name constant, 
   list of column names, functions to select and bind from that table, and functions to join through
-  to other tables based on it's foreign key.  
+  to other tables based on it's foreign key.
+- Extensibility. The builder is written in a modular format and I plan to implement dialects (e.g. 
+  PostgreSQL) as a separate builder that embeds the standard builder. The way the DSL works means that 
+  anything not explicity supported by the DSL is inaccessable. This design will enable consumer of this
+  libarary to taylor it to their needs. 
   
 
 # Future work
+
+## PostgreSQL dialect 
+I plan to implement other dialects as their own builders in their own package. This will mean hiding all
+the current builders behind interfaces to allow the dialects to implement them with their extensions. This
+approach should allow consumers of this library to extend the DSL for their use case. 
 
 ## Query execution and result binding 
 We need a way to execute the query and scan the result into a result struct. 
